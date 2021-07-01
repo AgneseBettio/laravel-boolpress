@@ -27,5 +27,26 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', 'HomeController@index')->name('index');       
         Route::resource('/posts', 'PostController');
+
+        // //-@index
+        // Route::get('/', 'PostController@index')->name('index'); 
+        // //-@store
+        // Route::post('/posts', 'PostController@store')->name('store'); 
+
+
+        // //nuovo post -@create pagina con form
+        // Route::get('/posts/create', 'PostController@create')->name('create'); 
+
+        // //-@show
+        // Route::get('/posts/{post}', 'PostController@show')->name('show');
+        // //modifico post->ritorna show
+        // Route::match(['PUT', 'PATCH'], '/posts/{post}', 'PostController@update')->name('update');
+
+        // //-@delete
+        // Route::delete('/posts/{post}', 'PostController@destroy')->name('destroy');
+
+        // //-@edit
+        // Route::get('/posts/{post}/edit', 'PostController@edit')->name('edit');
+
     });
 
