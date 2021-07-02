@@ -2,7 +2,7 @@
 @section('content')
 <div class="container">
     <div class="form-group">
-        <form action="{{ route('admin.posts.update', $post->id) }}" method="post">
+        <form action="{{ route('admin.posts.store') }}" method="post">
             @csrf
             {{-- titolo --}}
             <label for="title">titolo</label>
