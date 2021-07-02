@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('content')
 <div class="container">
@@ -13,8 +13,11 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
+                    @auth
                     {{ __('You are logged in!') }}
+                    @else
+                    {{ __('You are not logged in!') }}
+                    @endauth
                 </div>
             </div>
         </div>

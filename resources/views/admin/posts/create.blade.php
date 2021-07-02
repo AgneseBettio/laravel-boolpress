@@ -1,4 +1,4 @@
-@extends('layouts.public')
+@extends('layouts.app')
 @section('content')
 <div class="container">
     <div class="form-group">
@@ -10,7 +10,6 @@
             {{-- contenuto --}}
             <label for="content">contenuto</label>
             <textarea type="text" name="content" id="content" class="form-control" rows="20"></textarea>
-
             <input  class="btn btn-primary" type="submit" value="salva">
     
         </form>
