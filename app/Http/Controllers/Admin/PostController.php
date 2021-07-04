@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Post;
+use App\Category;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -13,10 +17,11 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(Request $request) {
         $data = [
-            'posts' => Post::all()
+            'posts' => Post::orderBy("created_at", "DESC")
+                ->where("user_id", $request->user()->id)
+                ->get()
         ];
         
         return view("admin.posts.index", $data);
@@ -29,24 +34,51 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('admin.posts.create');
+        $categories = Category::all();
+
+        $data = [
+            'categories' => $categories
+        ];
+        return view('admin.posts.create', $data);
     }
 
-    /**
+    /** 
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Session $session)
     {
-        $data = $request->all();
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+            'category_id' => "nullable|exists:categories,id"
+        ]);
+
+        $formData = $request->all();
         $newPost = new Post();
-        $newPost->title = $data['title'];
-        $newPost->content = $data['content'];
-        $newPost->slug = $data['slug'];
+        $newPost->fill($formData);
+        $newPost->user_id = $request->user()->id;
+
+        //genero lo slug da title
+        $slug=Str::slug($newPost->title);
+        $slugBase= $slug;
+        //verifico disponibilità slug
+        $postPresente = Post::where('slug', $slug)->first();
+        $contatore = 1;
+        //ciclo while per trovare corrispondenza
+        while ($postPresente) {
+            $slug = $slugBase . '-' . $contatore;
+            $contatore++;
+            $postPresente = Post::where('slug', $slug)->first();
+        }
+        //quando ese dal ciclo sicurezza slug unique
+        $newPost->slug = $slug;
+
         $newPost->save();
-        return redirect()->route('admin.posts.show', $newPost->id);
+
+        return redirect()->route('admin.posts.index');
     }
 
     /**
@@ -57,8 +89,9 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        $user = $post->user;    
         return view('admin.posts.show', [
-            'post' => $post]);
+            'post' => $post, 'user' => $user]);
     }
 
     /**
@@ -68,9 +101,14 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Post $post)
-    {
-        return view('admin.posts.edit', [
-            'post'=> $post]);
+    {   
+        $categories = Category::all();
+
+        $data = [
+            'post'=> $post,
+            'categories' => $categories
+        ];
+        return view('admin.posts.edit', $data );
     }
 
     /**
@@ -82,9 +120,31 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        $data = $request->all();
-        $post->update($data);
-        return redirect()->route('admin.posts.show', $post->id);
+        $request->validate([
+            'title' => 'required|max:255',
+            'content' => 'required',
+        ]);
+        $formData = $request->all();
+
+        //verifico che titolo non sia cambiato
+        if($formData['title'] != $post->title){
+            $slug= Str::slug($formData['title']);
+            $slugBase= $slug;
+            //esiste in database precedente?
+            $postPresente = Post::where('slug', $slug)->first();
+            $contatore = 1;
+            //ciclo while
+            while($postPresente){
+                $slug = $slugBase . '-' . $contatore;
+                $contatore++;
+                $postPresente = Post::where('slug', $slug)->first();
+            }
+            //quando esco da while sono sicuro che slug è unique
+            $formData['slug'] = $slug;
+        }
+        $post->update($formData);
+        
+        return redirect()->route('admin.posts.index');
     }
 
     /**

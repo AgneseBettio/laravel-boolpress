@@ -13,7 +13,20 @@
                 {{-- contenuto --}}
                 <label for="content">contenuto</label>
                 <textarea type="text" name="content" id="content" value="{{ $post->content}}" class="form-control" rows="20"></textarea>
-
+                {{-- categoria --}}
+                <label>Categoria</label>
+                    <select name="category_id" class="form-control  @error('category_id') is-invalid @enderror" >
+                        <option value="">-- seleziona categoria --</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}"
+                                {{ $category->id == old('category_id', $post->category_id) ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror    
 
                 <input  class="btn btn-primary" type="submit" value="salva">
         

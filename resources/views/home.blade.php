@@ -16,8 +16,12 @@
                     @auth
                     {{ __('You are logged in!') }}
                     @else
-                    {{ __('You are not logged in!') }}
+                    <div class="text-center">
+                        <a class="display-4"  href="{{ route("posts.index") }}">Vai ai post publici</a>
+
                     @endauth
+                    </div>
+                    
                 </div>
             </div>
         </div>

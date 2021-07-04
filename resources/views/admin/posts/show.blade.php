@@ -5,8 +5,9 @@
     <div class="text-center border border-primary rounded-left">
         <h2>TITLE: {{ $post->title }}</h2>
         <p>{{ $post->content }}</p>
+        <p> autore: {{$post->user->name}} ({{$user->email}})</p>
     </div>
-    <a href="{{ route('admin.posts.edit', $post->id) }}" class="badge badge-primary">modifica il tuo post</a><br>
-    <a href="{{ route('admin.posts.index') }}" class="badge badge-primary">ritorna alla home</a><br>
+    <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-light">modifica il tuo post</a><br>
+    <a href="{{ route('admin.posts.index') }}" class="btn btn-outline-primary">ritorna indietro</a><br>
 </div>
 @endsection

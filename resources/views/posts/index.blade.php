@@ -5,9 +5,10 @@
         <div class="card text-center" style="width: rem;">
             <div class="card-body">
                 <h5 class="card-title text-center">{{$post->title}}</h5>
-                <p class="card-text">{{$post->text}}</p>
+                <p class="card-text">{{ substr($post->content, 0, 100) }}</p>
+                <p class="card-text"> ultimo aggiornamento {{ $post->updated_at }}</p>
                 {{-- mostra post --}}
-                <a href="{{ route('admin.posts.show', $post->id ) }}" class="badge badge-primary">espandi</a>
+                <a href="{{ route('posts.show', ['slug' => $post->slug]) }}" class="badge badge-primary">espandi</a>
             </div>
         </div>          
         @endforeach 
