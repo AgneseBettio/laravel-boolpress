@@ -8,13 +8,13 @@
                 {{-- aggiungo metodo specifico --}}
                 @method('PUT')
                 {{-- titolo --}}
-                <label for="title">titolo</label>
+                <label for="title">titolo</label><br>
                 <input type="text" name="title" id="title" value="{{ $post->title }}" class="form-control">
                 {{-- contenuto --}}
-                <label for="content">contenuto</label>
+                <label for="content">contenuto</label><br>
                 <textarea type="text" name="content" id="content" value="{{ $post->content}}" class="form-control" rows="20"></textarea>
                 {{-- categoria --}}
-                <label>Categoria</label>
+                <label>Categoria</label><br>
                     <select name="category_id" class="form-control  @error('category_id') is-invalid @enderror" >
                         <option value="">-- seleziona categoria --</option>
                         @foreach ($categories as $category)
@@ -26,7 +26,21 @@
                     </select>
                     @error('category_id')
                     <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror    
+                    @enderror 
+                {{-- Tag --}}
+                <label>Tags</label><br>
+
+                @foreach($tags as $tag)
+
+                <div class="form-check form-check-inline">
+                    <label class="form-check-label">
+                    {{-- uso checkbox per problematica 'multiple' --}}
+                    <input name="tags[]" class="form-check-input" type="checkbox" value="{{ $tag->id }}">
+                    {{ $tag->name }}
+                    </label>
+                </div>
+
+                @endforeach
 
                 <input  class="btn btn-primary" type="submit" value="salva">
         

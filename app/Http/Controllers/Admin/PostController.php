@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Post;
 use App\Category;
+use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Facades\Auth;
@@ -35,9 +36,11 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
+        $tags = Tag::all();
 
         $data = [
-            'categories' => $categories
+            'categories' => $categories,
+            'tags' => $tags
         ];
         return view('admin.posts.create', $data);
     }
@@ -103,10 +106,13 @@ class PostController extends Controller
     public function edit(Post $post)
     {   
         $categories = Category::all();
+        $tags = Tag::all();
 
         $data = [
             'post'=> $post,
-            'categories' => $categories
+            'categories' => $categories,
+            'tags' => $tags
+             
         ];
         return view('admin.posts.edit', $data );
     }
@@ -123,7 +129,8 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
-            'category_id' => "nullable|exists:categories,id"
+            'category_id' => "nullable|exists:categories,id",
+            'tags' => "exists:tags,id"
         ]);
         $formData = $request->all();
 
@@ -143,6 +150,15 @@ class PostController extends Controller
             //quando esco da while sono sicuro che slug è unique
             $formData['slug'] = $slug;
         }
+        //verifica per tags
+        if (!key_exists("tags", $formData)) {
+            $form_data["tags"] = [];
+        }
+
+        //$post->tags()->detach();
+        //$post->tags()->attach($form_data["tags"]);
+
+        $post->tags()->sync($form_data["tags"]);
         $post->update($formData);
         
         return redirect()->route('admin.posts.index');
@@ -156,6 +172,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $post->tags()->detach();
         $post->delete();
         return redirect()->route('admin.posts.index');
     }
