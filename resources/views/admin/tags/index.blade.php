@@ -13,10 +13,10 @@
         <tbody>
           @foreach ($tags as $tag)
           <tr>
-            <td>{{ $tags->id }}</td>
-            <td>{{ $tags->name }}</td>
-            <td>{{ $tags->slug }}</td>
-            {{-- <td>{{ count($tags->posts) }}</td> --}}
+            <td>{{ $tag->id }}</td>
+            <td>{{ $tag->name }}</td>
+            <td>{{ $tag->slug }}</td>
+            <td>{{ count($tag->posts) }}</td>
           </tr>
           @endforeach
         </tbody>
